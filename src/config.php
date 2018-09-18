@@ -10,10 +10,21 @@
  */
 
 return [
-    'default' => [
-        'app_id'      => env('XINGE_APP_ID'),
-        'secret_key'  => env('XINGE_SECRET_KEY'),
-        'access_id'   => env('XINGE_ACCESS_ID'),
-        'environment' => env('XINGE_ENVIRONMENT', 'dev'),
+    'ios' => [
+        'default' => [
+            'app_id'      => env('XINGE_IOS_APP_ID'),
+            'secret_key'  => env('XINGE_IOS_SECRET_KEY'),
+            'access_id'   => env('XINGE_IOS_ACCESS_ID'),
+            'environment' => env('XINGE_IOS_ENVIRONMENT', 'dev'),
+        ],
     ],
+
+    'android' => [
+        'default' => [
+            'app_id'     => env('XINGE_ANDROID_APP_ID'),
+            'secret_key' => env('XINGE_ANDROID_SECRET_KEY'),
+            'access_id'  => env('XINGE_ANDROID_ACCESS_ID'),
+        ],
+    ],
+
 ];
