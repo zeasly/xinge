@@ -17,8 +17,6 @@ class Push
 
     // v3 接口
     const API_PUSH = 'https://openapi.xg.qq.com/v3/push/app';
-    const API_QUERY_PUSH_STATUS = 'http://openapi.xg.qq.com/v2/push/get_msg_status';
-    const API_CANCELTIMINGPUSH = 'http://openapi.xg.qq.com/v2/push/cancel_timing_task';
 
     //推送目标类型
     const AUDIENCE_TYPE_ALL = 'all';
@@ -184,6 +182,24 @@ class Push
         $response = $this->postJson(Push::API_PUSH, $param, $header);
 
         return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function getPushStatus($pushId)
+    {
+        $idList = array();
+        if (!is_array($pushIdList) || empty($pushIdList)) {
+            $ret['err_msg'] = 'pushIdList not valid';
+            return $ret;
+        }
+        foreach ($pushIdList as $pushId) {
+            $idList[] = array('push_id' => $pushId);
+        }
+        $params = array();
+        $params['access_id'] = $this->accessId;
+        $params['push_ids'] = json_encode($idList);
+        $params['timestamp'] = time();
+
+
     }
 
 
