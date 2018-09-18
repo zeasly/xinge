@@ -10,7 +10,7 @@ use Xinge\Push;
  * Date: 2018/9/18
  * Time: 下午5:23
  */
-class pushTest extends TestCase
+class PushTest extends TestCase
 {
     public function testAbs()
     {
