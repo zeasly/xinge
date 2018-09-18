@@ -181,7 +181,9 @@ class Push
         $header = [
             'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->secretKey),
         ];
-        return $this->postJson(Push::API_PUSH, $param, $header);
+        $response = $this->postJson(Push::API_PUSH, $param, $header);
+
+        return json_decode($response->getBody()->getContents(), true);
     }
 
 

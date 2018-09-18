@@ -258,4 +258,26 @@ trait HasHttpRequests
 
         return $options;
     }
+
+    /**
+     * Convert response contents to json.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response
+     *
+     * @return array
+     */
+    protected function unwrapResponse(ResponseInterface $response)
+    {
+        $contentType = $response->getHeaderLine('Content-Type');
+        $contents = $response->getBody()->getContents();
+
+        if (false !== stripos($contentType, 'json') || stripos($contentType, 'javascript')) {
+            return json_decode($contents, true);
+        } elseif (false !== stripos($contentType, 'xml')) {
+            return json_decode(json_encode(simplexml_load_string($contents)), true);
+        }
+
+        return $contents;
+    }
+
 }

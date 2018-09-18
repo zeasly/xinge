@@ -49,7 +49,7 @@ abstract class Message
     /**
      * @var string 消息类型
      */
-    protected $type;
+    protected $type = Message::TYPE_NOTIFICATION;
 
     /**
      * @var array 自定义数据
@@ -77,9 +77,10 @@ abstract class Message
     protected $statTag;
 
 
-    public function __construct()
+    public function __construct($title = '', $content = '')
     {
-
+        $this->title = $title;
+        $this->content = $content;
     }
 
 
