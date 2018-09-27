@@ -1,20 +1,28 @@
 <?php
-/**
- * Created by xiaoze <zeasly@live.com>.
- * User: ze
- * Date: 2018/9/17
- * Time: 下午9:17
+
+/*
+ * This file is part of the overtrue/wechat.
+ *
+ * (c) overtrue <i@overtrue.me>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
  */
 
-namespace Xinge;
+namespace Xinge\Push;
 
+use BaseSdk\Kernel\BaseClient;
+use Psr\Http\Message\RequestInterface;
+use Xinge\Message;
+use Xinge\MessageIos;
 
-use Xinge\Kernel\Traits\HasHttpRequests;
-
-class Push
+/**
+ * Class Client.
+ *
+ * @author overtrue <i@overtrue.me>
+ */
+class Client extends BaseClient
 {
-    use HasHttpRequests;
-
     // v3 接口
     const API_PUSH = 'https://openapi.xg.qq.com/v3/push/app';
 
@@ -34,30 +42,30 @@ class Push
 
     const IOS_MIN_ID = 2200000000;
 
-    public $appId = '';
-    public $secretKey = '';
-    public $accessId = '';
-    public $environment = Push::IOS_ENV_DEV;
-
-    public function __construct(array $config)
+    public function registerHttpMiddlewares()
     {
-        if (!isset($config['app_id']) || !isset($config['secret_key'])) {
-            throw new Exception('错误的配置文件', -1);
-        }
-
-        $this->appId = $config['app_id'];
-        $this->secretKey = $config['secret_key'];
-        $this->accessId = $config['access_id'] ?? '';
-        if (isset($config['environment'])) {
-            $this->environment = $config['environment'];
-        }
+        $this->pushMiddleware($this->authMiddleware(), 'auth');
+        parent::registerHttpMiddlewares();
     }
+
+    public function authMiddleware()
+    {
+        $appId = $this->app['config']->app_id;
+        $secretKey = $this->app['config']->secret_key;
+        return function (callable $handler) use ($appId, $secretKey) {
+            return function (RequestInterface $request, array $options) use ($handler, $appId, $secretKey) {
+                $request = $request->withHeader('Authorization', 'Basic ' . base64_encode($appId . ':' . $secretKey));
+                return $handler($request, $options);
+            };
+        };
+    }
+
 
     public function getPushParam(Message $message)
     {
         $param = $message->getPushData();
         if ($message instanceof MessageIos && !isset($param['environment'])) {
-            $param['environment'] = $this->environment;
+            $param['environment'] = $this->app['config']->environment;
         }
 
         return $param;
@@ -70,7 +78,7 @@ class Push
     public function toAll(Message $message)
     {
         $param = $this->getPushParam($message);
-        $param['audience_type'] = Push::AUDIENCE_TYPE_ALL;
+        $param['audience_type'] = Client::AUDIENCE_TYPE_ALL;
 
         return $this->push($param);
     }
@@ -85,7 +93,7 @@ class Push
         }
 
         $param = $this->getPushParam($message);
-        $param['audience_type'] = Push::AUDIENCE_TYPE_TOKEN;
+        $param['audience_type'] = Client::AUDIENCE_TYPE_TOKEN;
         $param['token_list'] = [$token];
 
         return $this->push($param);
@@ -94,7 +102,7 @@ class Push
     public function toTokens($tokenList, Message $message)
     {
         $param = $this->getPushParam($message);
-        $param['audience_type'] = Push::AUDIENCE_TYPE_TOKEN_LIST;
+        $param['audience_type'] = Client::AUDIENCE_TYPE_TOKEN_LIST;
         $param['push_id'] = 0;
 
         //每次只能发送1000个
@@ -126,7 +134,7 @@ class Push
             return $this->toAccounts($account, $message);
         }
         $param = $this->getPushParam($message);
-        $param['audience_type'] = Push::AUDIENCE_TYPE_ACCOUNT;
+        $param['audience_type'] = Client::AUDIENCE_TYPE_ACCOUNT;
         $param['account_list'] = [$account];
 
         return $this->push($param);
@@ -135,7 +143,7 @@ class Push
     public function toAccounts($accountList, Message $message)
     {
         $param = $this->getPushParam($message);
-        $param['audience_type'] = Push::AUDIENCE_TYPE_ACCOUNT_LIST;
+        $param['audience_type'] = Client::AUDIENCE_TYPE_ACCOUNT_LIST;
         $param['push_id'] = 0;
 
         //每次只能发送1000个
@@ -162,10 +170,10 @@ class Push
      * 推送消息给指定tags的设备
      * 若要推送的tagList只有一项，则tagsOp应为OR
      */
-    public function toTag($tagList, Message $message, $op = Push::TAG_OP_AND)
+    public function toTag($tagList, Message $message, $op = Client::TAG_OP_AND)
     {
         $param = $this->getPushParam($message);
-        $param['audience_type'] = Push::AUDIENCE_TYPE_TAG;
+        $param['audience_type'] = Client::AUDIENCE_TYPE_TAG;
         $param['tag_list'] = [
             'tags' => $tagList,
             'op'   => $op,
@@ -176,18 +184,7 @@ class Push
 
     public function push($param)
     {
-        $header = [
-            'Authorization' => 'Basic ' . base64_encode($this->appId . ':' . $this->secretKey),
-        ];
-        $response = $this->postJson(Push::API_PUSH, $param, $header);
-
-        return json_decode($response->getBody()->getContents(), true);
+        return $response = $this->httpPostJson(Client::API_PUSH, $param);
     }
-
-    public function getPushStatus($pushId)
-    {
-
-    }
-
 
 }

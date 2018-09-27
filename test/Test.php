@@ -1,17 +1,17 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
 use Xinge\MessageIos;
 
+require_once __DIR__.'/../vendor/autoload.php';
 /**
  * Created by xiaoze <zeasly@live.com>.
  * User: ze
  * Date: 2018/9/18
  * Time: 下午5:23
  */
-class PushTest extends TestCase
+class Test
 {
-    public function testAbs()
+    public static function push()
     {
         $config = [
             'app_id'      => 'da170e0e9cd0f',
@@ -28,3 +28,6 @@ class PushTest extends TestCase
     }
 
 }
+
+
+Test::push();

@@ -9,17 +9,24 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Xinge\Kernel\Contracts;
+namespace Xinge;
+
+use BaseSdk\Kernel\ServiceContainer;
+use Xinge\Push\Client;
 
 /**
- * Interface MediaInterface.
+ * Class Application.
  *
  * @author overtrue <i@overtrue.me>
+ *
+ * @property Client $push
  */
-interface MediaInterface extends MessageInterface
+class Application extends ServiceContainer
 {
     /**
-     * @return string
+     * @var array
      */
-    public function getMediaId(): string;
+    protected $providers = [
+        Push\ServiceProvider::class,
+    ];
 }

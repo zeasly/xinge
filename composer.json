@@ -3,7 +3,7 @@
   "description": "Xinge push sdk",
   "type": "library",
   "require": {
-    "guzzlehttp/guzzle": "^6.3",
+    "zeasly/base-sdk": "*@dev",
     "illuminate/support": "^5.7"
   },
   "require-dev": {
@@ -19,16 +19,6 @@
   "autoload": {
     "psr-4": {
       "Xinge\\": "src/"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Xinge\\ServiceProvider"
-      ],
-      "aliases": {
-        "EasyWeChat": "Xinge\\Facade"
-      }
     }
   }
 }
