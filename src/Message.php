@@ -6,7 +6,7 @@
  * Time: 下午8:54
  */
 
-namespace Xinge;
+namespace Zeasly\Xinge;
 
 
 abstract class Message
@@ -14,6 +14,8 @@ abstract class Message
     const TYPE_NOTIFICATION = 'notify';
     const TYPE_MESSAGE = 'message';
     const MAX_LOOP_TASK_DAYS = 15;
+    const PLATFORM_IOS = 'ios';
+    const PLATFORM_ANDROID = 'android';
 
     /**
      * @var Push 发送服务
@@ -84,7 +86,7 @@ abstract class Message
     }
 
 
-    function getPushData()
+    function toPushData()
     {
         $re = [
             'message_type' => $this->type,

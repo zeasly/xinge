@@ -6,7 +6,7 @@
  * Time: 下午10:29
  */
 
-namespace Xinge;
+namespace Zeasly\Xinge;
 
 
 class Exception extends \Exception

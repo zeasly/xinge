@@ -12,6 +12,7 @@
 namespace Overtrue\LaravelWeChat;
 
 use Illuminate\Support\Facades\Facade as LaravelFacade;
+use Zeasly\Xinge\Application;
 
 /**
  * Class Facade.
@@ -27,46 +28,15 @@ class Facade extends LaravelFacade
      */
     public static function getFacadeAccessor()
     {
-        return 'wechat.official_account';
+        return 'xinge';
     }
 
     /**
-     * @return \EasyWeChat\OfficialAccount\Application
+     * @return Application
      */
-    public static function officialAccount($name = '')
+    public static function account($name = '')
     {
-        return $name ? app('wechat.official_account.'.$name) : app('wechat.official_account');
+        return $name ? app('xinge.' . $name) : app('xinge');
     }
 
-    /**
-     * @return \EasyWeChat\Work\Application
-     */
-    public static function work($name = '')
-    {
-        return $name ? app('wechat.work.'.$name) : app('wechat.work');
-    }
-
-    /**
-     * @return \EasyWeChat\Payment\Application
-     */
-    public static function payment($name = '')
-    {
-        return $name ? app('wechat.payment.'.$name) : app('wechat.payment');
-    }
-
-    /**
-     * @return \EasyWeChat\MiniProgram\Application
-     */
-    public static function miniProgram($name = '')
-    {
-        return $name ? app('wechat.mini_program.'.$name) : app('wechat.mini_program');
-    }
-
-    /**
-     * @return \EasyWeChat\OpenPlatform\Application
-     */
-    public static function openPlatform($name = '')
-    {
-        return $name ? app('wechat.open_platform.'.$name) : app('wechat.open_platform');
-    }
 }

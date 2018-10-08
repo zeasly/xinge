@@ -18,7 +18,17 @@
   ],
   "autoload": {
     "psr-4": {
-      "Xinge\\": "src/"
+      "Zeasly\\Xinge\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Zeasly\\Xinge\\ServiceProvider"
+      ],
+      "aliases": {
+        "EasyWeChat": "Zeasly\\Xinge\\Facade"
+      }
     }
   }
 }

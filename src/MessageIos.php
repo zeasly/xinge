@@ -6,7 +6,7 @@
  * Time: 下午8:54
  */
 
-namespace Xinge;
+namespace Zeasly\Xinge;
 
 
 use Xinge\Kernel\Exceptions\InvalidArgumentException;
@@ -38,11 +38,11 @@ class MessageIos extends Message
      */
     protected $environment;
 
-    function getPushData()
+    function toPushData()
     {
-        $re = parent::getPushData();
+        $re = parent::toPushData();
 
-        $re['platform'] = 'ios';
+        $re['platform'] = MessageIos::PLATFORM_IOS;
         if (!is_null($this->environment)) {
             $re['environment'] = $this->environment;
         }

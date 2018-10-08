@@ -14,6 +14,7 @@ namespace Overtrue\LaravelWeChat;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use Laravel\Lumen\Application as LumenApplication;
+use Zeasly\Xinge\Application;
 
 /**
  * Class ServiceProvider.
@@ -39,10 +40,10 @@ class ServiceProvider extends LaravelServiceProvider
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
             $this->publishes([$source => config_path('xinge.php')], 'laravel-wechat');
         } elseif ($this->app instanceof LumenApplication) {
-            $this->app->configure('wechat');
+            $this->app->configure('xinge');
         }
 
-        $this->mergeConfigFrom($source, 'wechat');
+        $this->mergeConfigFrom($source, 'xinge');
     }
 
     /**
@@ -50,18 +51,18 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function register()
     {
+        $this->setupConfig();
+        $accounts = config('xinge.accounts');
         foreach ($accounts as $account => $config) {
-            $this->app->singleton("wechat.{$name}.{$account}", function ($laravelApp) use ($name, $account, $config, $class) {
-                $app = new $class(array_merge(config('wechat.defaults', []), $config));
-                if (config('wechat.defaults.use_laravel_cache')) {
-                    $app['cache'] = new CacheBridge($laravelApp['cache.store']);
-                }
-                $app['request'] = $laravelApp['request'];
+            $this->app->singleton("xinge.{$account}",
+                function ($laravelApp) use ($account, $config) {
+                    $app = new Application($config);
+                    $app['request'] = $laravelApp['request'];
 
-                return $app;
-            });
+                    return $app;
+                });
         }
-
+        $this->app->alias("xinge.default", 'xinge');
     }
 
 }

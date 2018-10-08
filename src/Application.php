@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Xinge;
+namespace Zeasly\Xinge;
 
 use BaseSdk\Kernel\ServiceContainer;
 use Xinge\Push\Client;

@@ -6,7 +6,7 @@
  * Time: 下午8:54
  */
 
-namespace Xinge;
+namespace Zeasly\Xinge;
 
 
 use Xinge\Kernel\Exceptions\InvalidArgumentException;
@@ -29,11 +29,11 @@ class MessageAndroid extends Message
     protected $smallIcon;
 
 
-    function getPushData()
+    function toPushData()
     {
-        $re = parent::getPushData();
+        $re = parent::toPushData();
 
-        $re['platform'] = 'android';
+        $re['platform'] = MessageAndroid::PLATFORM_ANDROID;
         $re['multi_pkg'] = $this->multiPkg;
 
         return $re;

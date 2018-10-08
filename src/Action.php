@@ -6,7 +6,7 @@
  * Time: 上午11:15
  */
 
-namespace Xinge;
+namespace Zeasly\Xinge;
 
 
 class Action

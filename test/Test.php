@@ -20,9 +20,10 @@ class Test
             'environment' => \Xinge\Push\Client::IOS_ENV_DEV,
 
         ];
+        // var_dump((new MessageIos('test', 'test'))->toPushData());exit;
         $app = new \Xinge\Application($config);
 
-        $re = $app->push->toToken('12332', new MessageIos('test', 'test'));
+        $re = $app->push->toToken('12332', (new MessageIos('test', 'test'))->toPushData());
         var_dump($re);exit;
 
     }

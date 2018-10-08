@@ -13,8 +13,6 @@ namespace Xinge\Push;
 
 use BaseSdk\Kernel\BaseClient;
 use Psr\Http\Message\RequestInterface;
-use Xinge\Message;
-use Xinge\MessageIos;
 
 /**
  * Class Client.
@@ -61,21 +59,20 @@ class Client extends BaseClient
     }
 
 
-    public function getPushParam(Message $message)
+    public function getPushParam(array $message)
     {
-        $param = $message->getPushData();
-        if ($message instanceof MessageIos && !isset($param['environment'])) {
-            $param['environment'] = $this->app['config']->environment;
+        if ($message['platform'] == 'ios' && !isset($message['environment'])) {
+            $message['environment'] = $this->app['config']->environment;
         }
 
-        return $param;
+        return $message;
     }
 
 
     /**
      * 推送消息给APP所有设备
      */
-    public function toAll(Message $message)
+    public function toAll(array $message)
     {
         $param = $this->getPushParam($message);
         $param['audience_type'] = Client::AUDIENCE_TYPE_ALL;
@@ -86,7 +83,7 @@ class Client extends BaseClient
     /**
      * 推送消息给多个账户
      */
-    public function toToken($token, Message $message)
+    public function toToken($token, array $message)
     {
         if (is_array($token)) {
             return $this->toTokens($token, $message);
@@ -99,7 +96,7 @@ class Client extends BaseClient
         return $this->push($param);
     }
 
-    public function toTokens($tokenList, Message $message)
+    public function toTokens($tokenList, array $message)
     {
         $param = $this->getPushParam($message);
         $param['audience_type'] = Client::AUDIENCE_TYPE_TOKEN_LIST;
@@ -128,7 +125,7 @@ class Client extends BaseClient
     /**
      * 推送消息给单个设备
      */
-    public function toAccount($account, Message $message)
+    public function toAccount($account, array $message)
     {
         if (is_array($account)) {
             return $this->toAccounts($account, $message);
@@ -140,7 +137,7 @@ class Client extends BaseClient
         return $this->push($param);
     }
 
-    public function toAccounts($accountList, Message $message)
+    public function toAccounts($accountList, array $message)
     {
         $param = $this->getPushParam($message);
         $param['audience_type'] = Client::AUDIENCE_TYPE_ACCOUNT_LIST;
@@ -170,7 +167,7 @@ class Client extends BaseClient
      * 推送消息给指定tags的设备
      * 若要推送的tagList只有一项，则tagsOp应为OR
      */
-    public function toTag($tagList, Message $message, $op = Client::TAG_OP_AND)
+    public function toTag($tagList, array $message, $op = Client::TAG_OP_AND)
     {
         $param = $this->getPushParam($message);
         $param['audience_type'] = Client::AUDIENCE_TYPE_TAG;
